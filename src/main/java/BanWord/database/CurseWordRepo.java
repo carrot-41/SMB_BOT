@@ -68,11 +68,6 @@ public class CurseWordRepo {
         }
     }
 
-    // 메시지 금지 여부 체크
-    public boolean isBanned(String guildId, String word) {
-        return repo.findByGuildIdAndWordIgnoreCaseAndBannedTrue(guildId, word).isPresent();
-    }
-
     // 서버별 모든 금지어 가져오기
     public List<CurseWord> getAllBanned(String guildId) {
         return repo.findAllByGuildIdAndBannedTrue(guildId);
