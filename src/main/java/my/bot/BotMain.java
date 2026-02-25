@@ -10,8 +10,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import response.*;
-import BanWord.MessageFilter;
+import response.ListenCommend;
+import response.Test;
+
 import java.util.EnumSet;
 
 @SpringBootApplication(scanBasePackages = {"my.bot", "response", "BanWord", "Warn"})
