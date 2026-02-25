@@ -1,0 +1,332 @@
+package response;
+
+import BanWord.database.CurseWordRepo;
+import Warn.WarnCount;
+import Warn.WarnRepo;
+import lombok.RequiredArgsConstructor;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.springframework.stereotype.Component;
+
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.stream.Collectors;
+
+@Component
+@RequiredArgsConstructor
+public class ListenCommend extends ListenerAdapter {
+
+    private final CurseWordRepo curseWordRepo;
+    private final WarnRepo warnRepo;
+    private static final String PREFIX = ">";
+    private String comment = "", command = "";
+    private MessageReceivedEvent messageReceivedEvent;
+
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        String message = event.getMessage().getContentRaw().trim();
+        // 접두사로 시작하지 않으면 무시
+        if (!message.startsWith(PREFIX)) {
+            return;
+        }
+
+        // ">" 만 입력했을 때 도움말 출력
+        if (message.equals(PREFIX)) {
+            event.getChannel().sendMessage("도움말이 필요하시면 '>help 입력하세요").queue();
+            return;
+        }
+
+        String[] args = message.substring(PREFIX.length()).trim().split("\\s+");
+        command = args[0].toLowerCase();
+        messageReceivedEvent = event;
+
+        //커맨드 처리
+        switch (command) {
+            case "help":
+            case "도움말":
+                readhelp("HelpMd/help.md");
+                break;
+
+            case "curseword":
+            case "금지어":
+                handleBanWordCommand(args);
+                break;
+
+            case "warn":
+            case "경고":
+                handleWarnCommand(args,"add");
+                break;
+
+            case "경고회수":
+            case "회수":
+                handleWarnCommand(args,"sub");
+                break;
+
+            case "mute":
+            case "뮤트":
+                handleMuteCommand(args);
+                break;
+
+            case "unmute":
+            case "언뮤트":
+                handleUnMuteCommand();
+                break;
+        }
+    }
+
+    // 금지어 관련 커맨드 처리
+    private void handleBanWordCommand(String[] args) {
+        //권한 체크
+        if (ChackOp()) return;
+
+        String word = (args.length > 1 ? args[1] : "").toLowerCase();
+        String OnOff = (args.length > 2 ? args[2] : "").toLowerCase();
+        String guildId = messageReceivedEvent.getGuild().getId();
+
+        //금지어 등록 이외의 명령어 처리
+        switch (word) {
+            case "list":
+                String list = curseWordRepo.listWords(guildId);
+                BanList(list);
+                return;
+            case "help":
+                readhelp("HelpMd/CurseWord.md");
+                return;
+            default:
+                if(OnOff.isEmpty()){
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb.setTitle("금지어 목록");
+                    eb.setColor(Color.cyan);
+                    eb.setDescription(word + "는 없는 명령어 입니다.\n 금지어 관련 도뭉말을 보시려면 '>금지어 help'를 입력해 주세요");
+                    MessageEmbed embed = eb.build();
+                    messageReceivedEvent.getChannel().sendMessageEmbeds(embed).queue();
+                }
+        }
+
+        // 금지어 등록/해제/재활성화 처리
+        switch (OnOff) {
+            case "new":
+                if (curseWordRepo.exists(guildId, word)) {
+                    comment = "이미 등록된 금지어입니다.";
+                } else {
+                    curseWordRepo.ban(guildId, word);
+                    comment = "금지어 '" + word + "'가 등록되었습니다.";
+                }
+                break;
+            case "off":
+                if (!curseWordRepo.exists(guildId, word)) {
+                    comment = "먼저 'new'로 금지어를 등록한 뒤 'off'를 사용할 수 있습니다.";
+                    break;
+                }
+                curseWordRepo.unban(guildId, word);
+                comment = "금지어 '" + word + "'가 해제되었습니다.";
+                break;
+            case "on":
+                if (!curseWordRepo.exists(guildId, word)) {
+                    comment = "먼저 'new'로 금지어를 등록한 뒤 'on'을 사용할 수 있습니다.";
+                    break;
+                }
+                curseWordRepo.reban(guildId, word);
+                comment = "금지어 '" + word + "'가 활성화되었습니다.";
+                break;
+        }
+        messageReceivedEvent.getMessage().reply(comment).queue();
+    }
+
+    // 경고 커맨드 처리: >경고 @유저 [사유...]
+    private void handleWarnCommand(String[] args,String Warning) {
+        if (ChackOp()) return;
+
+        if (messageReceivedEvent.getMessage().getMentions().getMembers().isEmpty()) {
+            messageReceivedEvent.getMessage().reply("경고를 줄 대상을 멘션해주세요.").queue();
+            return;
+        }
+        Member target = messageReceivedEvent.getMessage().getMentions().getMembers().get(0);
+        String guildId = messageReceivedEvent.getGuild().getId();
+        String userId = target.getId();
+        String reason = (args.length > 2 ? args[2] : "").toLowerCase();
+
+        /*if (messageReceivedEvent.getMember() != null && messageReceivedEvent.getMember().hasPermission(Permission.ADMINISTRATOR)){;
+        }*/
+
+        WarnCount warnCount;
+        int count;
+
+        switch (reason){
+            case "조회":
+            case "list":
+                String title = target.getUser().getName() + "님의 누적 경고 횟수";
+                count = warnRepo.getWarn(guildId,userId);
+                comment = "경고 횟수 : "+ count + "\n뮤트 : " + warnRepo.getMute(guildId,userId);
+                Embed(title,Color.cyan,comment);
+                return;
+        }
+
+        switch (Warning){
+            case "add":
+                warnCount = warnRepo.addWarn(guildId, userId);
+                count = warnCount.getWarncnt();
+                if(reason.isEmpty()){
+                    messageReceivedEvent.getChannel()
+                            .sendMessage(target.getAsMention() + "님께 경고 " + count + "회가 누적되었습니다.")
+                            .queue();
+                }
+                else{
+                    messageReceivedEvent.getChannel()
+                            .sendMessage(target.getAsMention() + "님께 경고 " + count + "회가 누적되었습니다. (사유: " + reason + ")")
+                            .queue();
+                }
+
+                // 타임아웃(뮤트)
+                try {
+                    if (count >= 5 && !warnCount.isMute()) {
+                        int timeout = count * 2;
+                        target.getGuild().timeoutFor(target, Duration.ofMinutes(timeout))
+                                .reason("경고 " + count + "회 누적")
+                                .queue(
+                                        v -> {
+                                            warnRepo.setMuted(guildId, userId, true);
+                                            messageReceivedEvent.getChannel().sendMessage(target.getAsMention() + "님이 10분 동안 뮤트되었습니다.").queue();
+                                        },
+                                        e -> messageReceivedEvent.getChannel().sendMessage("뮤트에 실패했습니다: " + e.getMessage()).queue()
+                                );
+                    }
+                }catch (HierarchyException e){
+                    System.out.println("해당 유저는 뮤트할 수 없습니다.");
+                    Embed("",Color.cyan,target.getAsMention()+"(은)는 뮤트할 수 없습니다");
+                    messageReceivedEvent.getMessage().reply(target.getAsMention()+"(은)는 뮤트할 수 없습니다").queue();
+
+                }
+                break;
+
+            case "sub":
+                count = warnRepo.getWarn(guildId,userId);
+                if(count<=0){
+                    messageReceivedEvent.getMessage().reply(target.getAsMention() +"(은)는 경고 수가 0입니다.").queue();
+                }
+                else{
+                    warnCount = warnRepo.subWarn(guildId,userId);
+                    count = warnCount.getWarncnt();
+                    String title = "경고 횟수 감소";
+                    comment = target.getAsMention()+"님의 경고횟수가 1 감소했습니다.\n"+
+                            "현재 경고 회수 : " + count;
+                    Embed(title,Color.cyan,comment);
+                }
+                break;
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + Warning);
+        }
+    }
+
+    // 뮤트 (>mute @유저 )
+    private void handleMuteCommand(String[] args) {
+        if (ChackOp()) return;
+
+        String muteTime = (args.length > 2 ? args[2] : "").toLowerCase();
+
+        if(messageReceivedEvent.getMessage().getMentions().getMembers().isEmpty()) {
+            messageReceivedEvent.getMessage().reply("뮤트할 대상을 멘션해주세요.").queue();
+            return;
+        }
+        else if(muteTime.isEmpty()){
+            messageReceivedEvent.getMessage().reply("뮤트 시간을 입력해 주세요").queue();
+        }
+
+        Member target = messageReceivedEvent.getMessage().getMentions().getMembers().get(0);
+        String guildId = messageReceivedEvent.getGuild().getId();
+        String userId = target.getId();
+
+        target.getGuild().timeoutFor(target, Duration.ofMinutes(10))
+                .queue(
+                        v -> {
+                            warnRepo.setMuted(guildId, userId, true);
+                            messageReceivedEvent.getChannel().sendMessage(target.getAsMention() + "님이 뮤트되었습니다.").queue();
+                        },
+                        e -> messageReceivedEvent.getChannel().sendMessage("뮤트에 실패했습니다: " + e.getMessage()).queue()
+                );
+    }
+
+    // 언뮤트 (>unmute @유저)
+    private void handleUnMuteCommand() {
+        if (ChackOp()) return;
+
+        if (messageReceivedEvent.getMessage().getMentions().getMembers().isEmpty()) {
+            messageReceivedEvent.getMessage().reply("언뮤트할 대상을 멘션해주세요.").queue();
+            return;
+        }
+
+        Member target = messageReceivedEvent.getMessage().getMentions().getMembers().get(0);
+        String guildId = messageReceivedEvent.getGuild().getId();
+        String userId = target.getId();
+
+        target.getGuild().removeTimeout(target)
+                .queue(
+                        v -> {
+                            warnRepo.setMuted(guildId, userId, false);
+                            messageReceivedEvent.getChannel().sendMessage(target.getAsMention() + "님의 뮤트가 해제되었습니다.").queue();
+                        },
+                        e -> messageReceivedEvent.getChannel().sendMessage("언뮤트에 실패했습니다: " + e.getMessage()).queue()
+                );
+    }
+
+    //help.md를 읽어오기
+    private void readhelp(String help){
+        InputStream is = getClass()
+                .getClassLoader()
+                .getResourceAsStream(help);
+
+        if (is == null) {
+            throw new RuntimeException("파일을 찾을 수 없습니다.");
+        }
+        try {
+            help = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            Embed("도움말",Color.cyan,help);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean ChackOp() {
+        boolean hasAdmin = messageReceivedEvent.getMember() != null && !messageReceivedEvent.getMember().hasPermission(Permission.ADMINISTRATOR);
+        if (hasAdmin) {
+            String currentPerms = messageReceivedEvent.getMember()
+                    .getPermissions().stream()
+                    .map(Permission::getName).sorted()
+                    .collect(Collectors.joining(", "));
+
+            String Description = "현재 권한 : `" + currentPerms
+                    + "`\n필요한 권한 : `" + "ADMINISTRATOR"
+                    + "`\n사용하려는 명령어 : `" + command + "`";
+            Embed("권한 부족",Color.RED,Description);
+        }
+        return hasAdmin;
+    }
+
+    private void BanList(String banlist){
+//        String currentPerms = Objects.requireNonNull(messageReceivedEvent.getMember())
+//                .getPermissions().stream()
+//                .map(Permission::getName).sorted()
+//                .collect(Collectors.joining(", "));
+        Embed("금지어 목록",Color.green,banlist);
+    }
+
+    private void Embed(String title, Color color, String message){
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle(title);
+        eb.setColor(color);
+        eb.setDescription(message);
+
+        MessageEmbed embed = eb.build();
+        messageReceivedEvent.getMessage().replyEmbeds(embed).queue();
+        eb.clear();
+    }
+}

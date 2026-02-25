@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.mongodb.jbplugin.editor.ConnectionPreferences">
+    <option name="dataSourceId" value="0e922d6d-3ad1-48be-a68b-dfeb987bab5d" />
+    <option name="database" value="DiscordBot" />
+  </component>
+</project>
