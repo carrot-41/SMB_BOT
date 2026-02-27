@@ -283,6 +283,28 @@ public class ListenCommend extends ListenerAdapter {
         }
     }
 
+    //클리어 (>클린 [삭제할 메세지 숫자])
+    private void CleanCommand(String[] args){
+        ChackOp();
+        int Cnt = 1;
+        String Count = (args.length > 2 ? args[2] : "").toLowerCase();
+
+        try {
+            Cnt = Integer.parseInt(Count);
+            if (!(Cnt > 0 && Cnt < 100)){
+                messageReceivedEvent.getMessage().reply("숫자는 1 ~ 100 사이로 입력해주세요.").queue();
+            }
+        }catch (NumberFormatException e){
+            System.out.println(e.getMessage()+"\n 문자를 숫자로 변환하려 함");
+            messageReceivedEvent.getMessage().reply("숫자를 입력하세요").
+                    queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+        }
+
+        messageReceivedEvent.getChannel().getIterableHistory()
+                .takeAsync(Cnt) // 비동기적으로 메시지 가져오기
+                .thenAccept(messageReceivedEvent.getChannel()::purgeMessages);
+    }
+
     //help.md를 읽어오기
     private void readhelp(String help){
         InputStream is = getClass()
