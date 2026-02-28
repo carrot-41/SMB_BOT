@@ -307,7 +307,7 @@ public class ListenCommend extends ListenerAdapter {
         }
 
         messageReceivedEvent.getChannel().getIterableHistory()
-                .takeAsync(Cnt) // 비동기적으로 메시지 가져오기
+                .takeAsync(Cnt+1) // 비동기적으로 메시지 가져오기
                 .thenAccept(messageReceivedEvent.getChannel()::purgeMessages);
     }
 
