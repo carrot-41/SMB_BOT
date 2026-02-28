@@ -40,7 +40,7 @@ Spring Boot와 JDA를 기반으로 한 Discord 서버 관리 봇입니다. 금�
 - **Java 17**
 - **Spring Boot 3.2.0**
 - **JDA (Java Discord API) 6.1.2**
-- **MongoDB** (데이터 저장소)
+- **MongoDB** (데이터 저장소)S
 - **Gradle** (빌드 도구)
 - **Lombok** (보일러플레이트 코드 감소)
 
@@ -160,8 +160,6 @@ java -jar build/libs/CMS_BOT-1.0-SNAPSHOT.jar
 - warncnt: Integer (경고 횟수)
 - mute: Boolean (뮤트 여부)
 ```
-
-## 🔧 개발 및 기여
 
 ### 코드 스타일
 - Lombok 사용으로 보일러플레이트 코드 최소화
