@@ -1,4 +1,4 @@
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://root:root@banwords.ajlsugx.mongodb.net/DiscordBot?retryWrites=true&w=majority&appName=BanWords
+      uri: mongodb+srv://<ID>:<PassWord>@<DB_CLUSTER>.ajlsugx.mongodb.net/<DB_NAME>?retryWrites=true&w=majority&appName=<BanWords>
