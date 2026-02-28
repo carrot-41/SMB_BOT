@@ -2,4 +2,4 @@ spring:
   data:
     mongodb:
       uri: mongodb+srv://<ID>:<PassWord>@<DB_CLUSTER>.ajlsugx.mongodb.net/<DB_NAME>?retryWrites=true&w=majority&appName=<AppName>
-      #<> 안에 있는 내용 바꾸기
+      #<> 안에있는 내용 바꾸기
