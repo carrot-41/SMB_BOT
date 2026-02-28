@@ -286,8 +286,13 @@ public class ListenCommend extends ListenerAdapter {
     //클리어 (>클린 [삭제할 메세지 숫자])
     private void CleanCommand(String[] args){
         ChackOp();
-        int Cnt = 1;
-        String Count = (args.length > 2 ? args[2] : "").toLowerCase();
+        int Cnt = 2;//지울 메세지 개수 + (>클린[내가 친 메세지])
+        String String_Cnt = (args.length > 1 ? args[1] : "").toLowerCase();
+
+        //만약 숫자 입력을 안하면 기본값 2로
+        if (String_Cnt.isEmpty()){
+            String_Cnt = "2";
+        }
 
         try {
             Cnt = Integer.parseInt(Count);
