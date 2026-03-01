@@ -52,36 +52,43 @@ public class ListenCommend extends ListenerAdapter {
 
         //커맨드 처리
         switch (command) {
+            case "h":
             case "help":
             case "도움말":
                 readhelp("HelpMd/help.md");
                 break;
 
-            case "bedword":
+            case "f":
+            case"filter":
             case "금지어":
                 BanWordCommand(args);
                 break;
 
+            case "w":
             case "경고":
                 WarnCommand(args,"add");
                 break;
 
+            case "rw":
+            case"경고 취소":
             case "경고회수":
                 WarnCommand(args,"sub");
                 break;
 
-            case "뮤트":
+            case "m":
             case "mute":
+            case "뮤트":
                 MuteCommand(args,true);
                 break;
 
+            case "um":
             case "언뮤트":
-            case "unmute":
                 MuteCommand(args,false);
                 break;
 
+            case "c":
+            case "clear":
             case "클린":
-            case "clean":
                 CleanCommand(args);
                 break;
 
@@ -104,7 +111,7 @@ public class ListenCommend extends ListenerAdapter {
         switch (word) {
             case "list":
                 String list = curseWordRepo.listWords(guildId);
-                BanList(list);
+                embedUtil.Embed("금지어 목록",Color.green,list);
                 return;
             case "help":
                 readhelp("HelpMd/CurseWord.md");
@@ -320,7 +327,7 @@ public class ListenCommend extends ListenerAdapter {
         embedUtil.Embed("메시지 삭제",Color.RED,"메세지 "+Cnt+"개 만큼 삭제 했습니다.",true,2);
     }
 
-    //help.md를 읽어오기
+    //help.md를 읽어오기1
     private void readhelp(String help){
         InputStream is = getClass()
                 .getClassLoader()
@@ -351,9 +358,5 @@ public class ListenCommend extends ListenerAdapter {
             embedUtil.Embed("권한 부족",Color.RED,Description);
         }
         return hasAdmin;
-    }
-
-    private void BanList(String banlist){
-        embedUtil.Embed("금지어 목록",Color.green,banlist);
     }
 }
