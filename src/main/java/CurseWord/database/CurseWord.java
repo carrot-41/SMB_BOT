@@ -1,4 +1,4 @@
-package BanWord.database;
+package CurseWord.database;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

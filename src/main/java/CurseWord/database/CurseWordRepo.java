@@ -1,4 +1,4 @@
-package BanWord.database;
+package CurseWord.database;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

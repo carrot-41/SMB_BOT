@@ -1,4 +1,4 @@
-package BanWord.database;
+package CurseWord.database;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

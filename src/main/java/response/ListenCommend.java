@@ -1,6 +1,6 @@
 package response;
 
-import BanWord.database.CurseWordRepo;
+import CurseWord.database.CurseWordRepo;
 import Warn.WarnCount;
 import Warn.WarnRepo;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +61,7 @@ public class ListenCommend extends ListenerAdapter {
             case "f":
             case"filter":
             case "금지어":
-                BanWordCommand(args);
+                CurseWordCommand(args);
                 break;
 
             case "w":
@@ -99,7 +99,7 @@ public class ListenCommend extends ListenerAdapter {
     }
 
     // 금지어 관련 커맨드 처리
-    private void BanWordCommand(String[] args) {
+    private void CurseWordCommand(String[] args) {
         //권한 체크
         if (ChackOp()) return;
 
