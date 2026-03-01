@@ -1,6 +1,6 @@
 package my.bot;
 
-import BanWord.MessageFilter;
+import CurseWord.MessageFilter;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -14,8 +14,8 @@ import response.Test;
 
 import java.util.EnumSet;
 
-@SpringBootApplication(scanBasePackages = {"my.bot", "response", "BanWord", "Warn"})
-@EnableMongoRepositories(basePackages = {"BanWord.database", "Warn"})
+@SpringBootApplication(scanBasePackages = {"my.bot", "response", "CurseWord", "Warn"})
+@EnableMongoRepositories(basePackages = {"CurseWord.database", "Warn"})
 
 public class BotMain {
     public static void main(String[] args) {
@@ -30,14 +30,14 @@ public class BotMain {
 
         String token = botToken.getBotToken();
 
-        ListenCommend commandListener = context.getBean(ListenCommend.class);
         MessageFilter messageFilter = context.getBean(MessageFilter.class);
+        ListenCommend  listenCommend = context.getBean(ListenCommend.class);
 
         JDABuilder.createDefault(token).
                 enableIntents(intent).
                 setActivity(Activity.competing("도움말은 >help")).
                 setStatus(OnlineStatus.ONLINE).
-                addEventListeners(commandListener, messageFilter,new Test()).
+                addEventListeners(messageFilter,listenCommend).
                 build();
 
         System.out.println(ANSI_CYAN+"bot booting successful"+ANSI_RESET);
