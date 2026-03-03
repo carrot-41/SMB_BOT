@@ -40,7 +40,7 @@ public class BotMain {
 
         JDABuilder.createDefault(token).
                 enableIntents(intent).
-                setActivity(Activity.competing("도움말은 >help")).
+                setActivity(Activity.listening("도움말은 >help")).
                 setStatus(OnlineStatus.ONLINE).
                 addEventListeners(messageFilter,listenCommend).
                 build();
