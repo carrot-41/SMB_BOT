@@ -120,7 +120,7 @@ public class ListenCommend extends ListenerAdapter {
             case "도움":
             case "h":
             case "help":
-                readhelp("HelpMd/CurseWord.md");
+                readhelp();
                 return;
             default:
                 if(OnOff.isEmpty()){
