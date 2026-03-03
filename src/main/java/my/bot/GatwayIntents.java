@@ -6,7 +6,7 @@ import java.util.EnumSet;
 
 @Getter
 public class GatwayIntents {
-    private EnumSet<GatewayIntent> intents = EnumSet.of(
+    private final EnumSet<GatewayIntent> intents = EnumSet.of(
             GatewayIntent.GUILD_MESSAGES,
             GatewayIntent.DIRECT_MESSAGES,
             GatewayIntent.MESSAGE_CONTENT,
