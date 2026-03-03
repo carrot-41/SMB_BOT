@@ -123,6 +123,7 @@ public class ListenCommend extends ListenerAdapter {
             case "help":
                 readhelp();
                 return;
+
             default:
                 if(OnOff.isEmpty()){
                     embedUtil.Embed("알 수 없는 명령어",Color.cyan,word + "(은)는 알 수 없습니다.\n" +
