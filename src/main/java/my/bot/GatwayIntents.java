@@ -15,7 +15,4 @@ public class GatwayIntents {
             GatewayIntent.GUILD_MEMBERS,
             GatewayIntent.GUILD_VOICE_STATES);
 
-    public EnumSet<GatewayIntent> getIntents() {
-        return intents;
-    }
 }
