@@ -156,8 +156,12 @@ public class ListenCommend extends ListenerAdapter {
                     comment = "현재 "+word+"은(는) 금지어로 설정되지 않았습니다.";
                     color = Color.RED;
                 }
-                curseWordRepo.unban(guildId, word);
-                comment = "금지어 '" + word + "'가 해제되었습니다.";
+                else{
+                    curseWordRepo.unban(guildId, word);
+                    title = "금지어 해제 완료";
+                    comment = "금지어 " + word + "(이)가 해제되었습니다.";
+                    color = Color.GREEN;
+                }
                 break;
             case "on":
                 if (!curseWordRepo.exists(guildId, word)) {
