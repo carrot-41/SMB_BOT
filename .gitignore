@@ -8,6 +8,7 @@ src/main/resources/application.yml
 src/main/resources/Token(Sample).properties
 src/main/resources/application(Sample).yml
 .idea
+qodana.yaml
 
 ### Logs ###
 *.log
