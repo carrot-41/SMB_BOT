@@ -27,7 +27,8 @@ public class ListenCommend extends ListenerAdapter {
     private final CurseWordRepo curseWordRepo;
     private final WarnRepo warnRepo;
     private static final String PREFIX = ">";
-    private String comment = "", command = "";
+    private String comment = "";
+    private String command = "";
     private MessageReceivedEvent messageReceivedEvent;
     EmbedUtil embedUtil;
 
