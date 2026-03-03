@@ -116,6 +116,9 @@ public class ListenCommend extends ListenerAdapter {
                 String list = curseWordRepo.listWords(guildId);
                 embedUtil.Embed("금지어 목록",Color.green,list);
                 return;
+
+            case "도움":
+            case "h":
             case "help":
                 readhelp("HelpMd/CurseWord.md");
                 return;
