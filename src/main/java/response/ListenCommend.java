@@ -340,7 +340,7 @@ public class ListenCommend extends ListenerAdapter {
             throw new RuntimeException("파일을 찾을 수 없습니다.");
         }
         try {
-            help = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            String help = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             embedUtil.Embed("도움말",Color.cyan,help);
         } catch (IOException e) {
             throw new RuntimeException(e);
