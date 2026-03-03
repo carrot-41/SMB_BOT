@@ -22,13 +22,6 @@ public class BotMain {
         final GatwayIntents intents = new GatwayIntents();
 
         ApplicationContext context = SpringApplication.run(BotMain.class, args);
-
-        BotToken botToken = new BotToken();
-        GatwayIntents intents = new GatwayIntents();
-        EnumSet<GatewayIntent> intent = intents.getIntents();
-
-        String token = botToken.getBotToken();
-
         MessageFilter messageFilter = context.getBean(MessageFilter.class);
         ListenCommend  listenCommend = context.getBean(ListenCommend.class);
 
