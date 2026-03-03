@@ -172,9 +172,6 @@ public class ListenCommend extends ListenerAdapter {
         String userId = target.getId();
         String reason = (args.length > 2 ? args[2] : "").toLowerCase();
 
-        /*if (messageReceivedEvent.getMember() != null && messageReceivedEvent.getMember().hasPermission(Permission.ADMINISTRATOR)){;
-        }*/
-
         WarnCount warnCount;
         int count;
 
