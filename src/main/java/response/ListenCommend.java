@@ -133,6 +133,8 @@ public class ListenCommend extends ListenerAdapter {
         String title;
         Color color;
         switch (OnOff) {
+            case "추가":
+            case "n":
             case "new":
                 if (curseWordRepo.exists(guildId, word)) {
                     comment = "이미 등록된 금지어입니다.";
