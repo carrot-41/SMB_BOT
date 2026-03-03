@@ -137,7 +137,10 @@ public class ListenCommend extends ListenerAdapter {
             case "n":
             case "new":
                 if (curseWordRepo.exists(guildId, word)) {
-                    comment = "이미 등록된 금지어입니다.";
+                    title = "금지어 등록 오류";
+                    comment = word+"은(는) 이미 등록된 금지어입니다.";
+                    color = Color.RED;
+
                 } else {
                     curseWordRepo.ban(guildId, word);
                     comment = "금지어 '" + word + "'가 등록되었습니다.";
