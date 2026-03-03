@@ -43,7 +43,7 @@ public class ListenCommend extends ListenerAdapter {
 
         // ">" 만 입력했을 때 도움말 출력
         if (message.equals(PREFIX)) {
-            event.getChannel().sendMessage("도움말이 필요하시면 '>help 입력하세요").queue();
+            readhelp();
             return;
         }
 
