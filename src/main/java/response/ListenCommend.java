@@ -94,7 +94,8 @@ public class ListenCommend extends ListenerAdapter {
 
             default:
                 System.out.println("존재하지 않는 명령어 입니다.");
-                event.getChannel().sendMessage("존재하지 않는 명령어입니다.").queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+                embedUtil.Embed("알 수 없는 명령어",Color.RED,command + "(은)는 알 수 없습니다.\n" +
+                                                                        "도움말은 >help를 사용하여 확인하실 수 있습니다.",true,5);
         }
     }
 
