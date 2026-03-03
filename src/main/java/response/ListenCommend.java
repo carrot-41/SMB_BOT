@@ -130,6 +130,8 @@ public class ListenCommend extends ListenerAdapter {
         }
 
         // 금지어 등록/해제/재활성화 처리
+        String title;
+        Color color;
         switch (OnOff) {
             case "new":
                 if (curseWordRepo.exists(guildId, word)) {
