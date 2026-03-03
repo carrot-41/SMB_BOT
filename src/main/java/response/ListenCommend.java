@@ -143,7 +143,9 @@ public class ListenCommend extends ListenerAdapter {
 
                 } else {
                     curseWordRepo.ban(guildId, word);
-                    comment = "금지어 '" + word + "'가 등록되었습니다.";
+                    title ="금지어 등록 성공";
+                    comment = "금지어 " + word + "(이)가 등록되었습니다.";
+                    color = Color.green;
                 }
                 break;
             case "off":
