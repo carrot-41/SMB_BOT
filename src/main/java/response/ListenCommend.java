@@ -36,7 +36,6 @@ public class ListenCommend extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String message = event.getMessage().getContentRaw().trim();
         embedUtil = new EmbedUtil(event);
-        String message = event.getMessage().getContentRaw().trim();
         // 접두사로 시작하지 않으면 무시
         if (!message.startsWith(PREFIX)) {
             return;
@@ -57,7 +56,7 @@ public class ListenCommend extends ListenerAdapter {
             case "h":
             case "help":
             case "도움말":
-                readhelp("HelpMd/help.md");
+                readhelp();
                 break;
 
             case "f":
