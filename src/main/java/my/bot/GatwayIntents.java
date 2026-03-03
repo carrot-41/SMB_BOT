@@ -1,5 +1,6 @@
 package my.bot;
 
+import lombok.Getter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.util.EnumSet;
