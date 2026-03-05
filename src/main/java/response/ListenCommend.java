@@ -1,5 +1,5 @@
 package response;
-
+//뮤트 경고문 정리 할것
 import CurseWord.database.CurseWordRepo;
 import Warn.WarnCount;
 import Warn.WarnRepo;
@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -117,26 +118,25 @@ public class ListenCommend extends ListenerAdapter {
             case "list":
                 String list = curseWordRepo.listWords(guildId);
                 embedUtil.Embed("금지어 목록",Color.green,list);
-                return;
+                break;
 
             case "도움":
             case "h":
             case "help":
                 readhelp();
-                return;
+                break;
 
             default:
-                if(OnOff.isEmpty()){
-                    embedUtil.Embed("알 수 없는 명령어",Color.cyan,word + "(은)는 알 수 없습니다.\n" +
+                if(word.isEmpty()&&OnOff.isEmpty()){
+                    embedUtil.Embed("금지어",Color.RED ,command + "만 사용 할 수는 없습니다.\n" +
                                                                                     "도움말은 >help를 사용하여 확인하실 수 있습니다.",true);
                 }
-                
+
                 return;
         }
 
         // 금지어 등록/해제/재활성화 처리
         String title;
-        Color color;
         switch (OnOff) {
             case "추가":
             case "n":
@@ -239,25 +239,30 @@ public class ListenCommend extends ListenerAdapter {
                     comment = target.getAsMention() + "님께 경고 " + count + "회가 누적되었습니다. (사유: " + reason + ")";
                 }
                 embedUtil.Embed("경고 횟수",color,comment);
-                
+
                 // 타임아웃(뮤트)
                 try {
                     if (count >= 5 && !warnCount.isMute()) {
                         int timeout = count * 2;
+                        color = new Color(251,101,68);
+                        comment = target.getAsMention() + "님이 10분 동안 뮤트되었습니다.";
+                        String currentPerms = Objects.requireNonNull(messageReceivedEvent.getMember())
+                                .getPermissions().stream()
+                                .map(Permission::getName).sorted()
+                                .collect(Collectors.joining(", "));
+
                         target.getGuild().timeoutFor(target, Duration.ofMinutes(timeout))
                                 .reason("경고 " + count + "회 누적")
                                 .queue(
                                         v -> {
                                             warnRepo.setMuted(guildId, userId, true);
-                                            messageReceivedEvent.getChannel().sendMessage(target.getAsMention() + "님이 10분 동안 뮤트되었습니다.").queue();
+                                            embedUtil.Embed("뮤트",color,comment);
                                         },
-                                        e -> messageReceivedEvent.getChannel().sendMessage("뮤트에 실패했습니다: " + e.getMessage()).queue()
+                                        e -> embedUtil.Embed("뮤트 실패",Color.RED,target.getAsMention()+"님의 권한이 높습니다."+"\n 현재 권한 : "+ currentPerms)
                                 );
                     }
                 }catch (HierarchyException e){
-                    System.out.println("해당 유저는 뮤트할 수 없습니다.");
-                    embedUtil.Embed("",Color.cyan,target.getAsMention()+"(은)는 뮤트할 수 없습니다");
-                    messageReceivedEvent.getMessage().reply(target.getAsMention()+"(은)는 뮤트할 수 없습니다").queue();
+                    embedUtil.Embed("뮤트 실패",Color.cyan,target.getAsMention()+"(은)는 뮤트할 수 없습니다");
                 }
                 break;
 
@@ -285,31 +290,42 @@ public class ListenCommend extends ListenerAdapter {
     // 뮤트 (>mute @유저 )
     private void MuteCommand(String[] args,boolean mute) {
         if (ChackOp()) return;
+        int time = 5;
 
         //뮤트
         if (mute){
-            String muteTime = (args.length > 2 ? args[2] : "").toLowerCase();
+            String muteTime = (args.length > 2 ? args[2] : "").toLowerCase();//인트로 바꾸고 타임 적용하기
 
             if(messageReceivedEvent.getMessage().getMentions().getMembers().isEmpty()) {
                 messageReceivedEvent.getMessage().reply("뮤트할 대상을 멘션해주세요.").queue();
                 return;
             }
-            else if(muteTime.isEmpty()){
-                messageReceivedEvent.getMessage().reply("뮤트 시간을 입력해 주세요").queue();
+
+            //뮤트 시간 처리
+            try {
+                if(muteTime.isEmpty()){
+                    messageReceivedEvent.getMessage().reply("뮤트 시간을 입력해 주세요").queue();
+                    return;
+                }
+                else{
+                    time = Integer.parseInt(muteTime);
+                }
+            }catch (NumberFormatException e){
+                embedUtil.Embed("뮤트 시간 에러", Color.RED,"뮤트할 시간은 정수로 입력해주세요",true);
             }
 
             Member target = messageReceivedEvent.getMessage().getMentions().getMembers().get(0);
             String guildId = messageReceivedEvent.getGuild().getId();
             String userId = target.getId();
-
-            target.getGuild().timeoutFor(target, Duration.ofMinutes(10))
-                    .queue(
-                            v -> {
-                                warnRepo.setMuted(guildId, userId, true);
-                                messageReceivedEvent.getChannel().sendMessage(target.getAsMention() + "님이 뮤트되었습니다.").queue();
-                            },
-                            e -> messageReceivedEvent.getChannel().sendMessage("뮤트에 실패했습니다: " + e.getMessage()).queue()
-                    );
+            try {
+                target.getGuild().timeoutFor(target, Duration.ofMinutes(time))
+                        .queue(
+                                    warnRepo.setMuted(guildId, userId, true);
+                                    embedUtil.Embed("뮤트 성공",Color.GREEN,target.getAsMention() + "님을 "+muteTime+"분간 뮤트 했습니다.");
+            }
+            catch (Exception e) {
+                embedUtil.Embed("뮤트중 에러발생",Color.orange,"해당 유저가 현재 봇보다 권한이 높기에 뮤트할 수 없습니다.\n"+"대상 권한 : " + HighestPerm.GetHighestPerm(messageReceivedEvent));
+            }
         }
 
         //언뮤트
@@ -329,7 +345,7 @@ public class ListenCommend extends ListenerAdapter {
                                 warnRepo.setMuted(guildId, userId, false);
                                 messageReceivedEvent.getChannel().sendMessage(target.getAsMention() + "님의 뮤트가 해제되었습니다.").queue();
                             },
-                            e -> messageReceivedEvent.getChannel().sendMessage("언뮤트에 실패했습니다: " + e.getMessage()).queue()
+                            e -> embedUtil.Embed("뮤트중 에러발생",Color.BLACK,"에러 코드 : "+e.getMessage())
                     );
         }
     }
@@ -368,7 +384,7 @@ public class ListenCommend extends ListenerAdapter {
     private void readhelp(){
         InputStream is = getClass()
                 .getClassLoader()
-                .getResourceAsStream("HelpMd/help.md");
+                .getResourceAsStream("help.md");
 
         if (is == null) {
             throw new RuntimeException("파일을 찾을 수 없습니다.");
@@ -384,12 +400,9 @@ public class ListenCommend extends ListenerAdapter {
     private boolean ChackOp() {
         boolean hasAdmin = messageReceivedEvent.getMember() != null && !messageReceivedEvent.getMember().hasPermission(Permission.ADMINISTRATOR);
         if (hasAdmin) {
-            String currentPerms = messageReceivedEvent.getMember()
-                    .getPermissions().stream()
-                    .map(Permission::getName).sorted()
-                    .collect(Collectors.joining(", "));
+            String getHighestPerm = HighestPerm.GetHighestPerm(messageReceivedEvent);
 
-            String Description = "현재 권한 : `" + currentPerms
+            String Description = "현재 권한 : `" + getHighestPerm
                     + "`\n필요한 권한 : `" + "ADMINISTRATOR"
                     + "`\n사용하려는 명령어 : `" + command + "`";
             embedUtil.Embed("권한 부족",Color.RED,Description);
