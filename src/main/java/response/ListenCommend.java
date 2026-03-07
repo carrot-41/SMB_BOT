@@ -1,6 +1,7 @@
 package response;
 
 import lombok.RequiredArgsConstructor;
+import my.bot.BotMain;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
