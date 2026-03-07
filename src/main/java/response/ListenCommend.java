@@ -45,7 +45,7 @@ public class ListenCommend extends ListenerAdapter {
 
         // ">" 만 입력했을 때 도움말 출력
         if (message.equals(PREFIX)) {
-            readhelp();
+            readhelp(event);
             return;
         }
 
