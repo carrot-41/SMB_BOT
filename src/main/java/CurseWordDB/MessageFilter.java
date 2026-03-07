@@ -1,9 +1,9 @@
 package CurseWord;
 
-import CurseWord.Normalizer.HangulUtils;
-import CurseWord.Normalizer.TextNormalizer;
-import CurseWord.database.CurseWord;
-import CurseWord.database.CurseWordRepo;
+import CurseWordDB.Normalizer.HangulUtils;
+import CurseWordDB.Normalizer.TextNormalizer;
+import CurseWordDB.database.CurseWord;
+import CurseWordDB.database.CurseWordRepo;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
