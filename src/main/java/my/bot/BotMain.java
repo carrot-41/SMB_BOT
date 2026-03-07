@@ -1,6 +1,7 @@
 package my.bot;
 
-import CurseWord.MessageFilter;
+import CurseWordDB.MessageFilter;
+import lombok.Getter;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
