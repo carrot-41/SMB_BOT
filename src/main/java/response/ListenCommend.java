@@ -105,8 +105,10 @@ public class ListenCommend extends ListenerAdapter {
     }
 
     private boolean ChackOp() {
-        boolean hasAdmin = messageReceivedEvent.getMember() != null && !messageReceivedEvent.getMember().hasPermission(Permission.ADMINISTRATOR);
-        if (hasAdmin) {
+        /*만약에 관리자 권한이 있으면 true 반환
+        * 관리자 권한이 없으면 false 반환*/
+        boolean hasAdmin = messageReceivedEvent.getMember() != null && messageReceivedEvent.getMember().hasPermission(Permission.ADMINISTRATOR);
+        if (!hasAdmin) {
             String getHighestPerm = HighestPerm.GetHighestPerm(messageReceivedEvent);
 
             String Description = "현재 권한 : `" + getHighestPerm
