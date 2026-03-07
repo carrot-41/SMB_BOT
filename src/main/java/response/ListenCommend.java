@@ -13,7 +13,7 @@ import response.Util.HighestPermUtil;
 import java.awt.*;
 
 import static response.Command.Clean.CleanCommand;
-import static response.Command.CursWord.CurseWordCommand;
+import static response.Command.CurseWord.CurseWordCommand;
 import static response.Command.Help.readhelp;
 import static response.Command.Mute.MuteCommand;
 import static response.Command.Warn.WarnCommand;

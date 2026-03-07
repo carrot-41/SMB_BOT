@@ -6,7 +6,7 @@ import response.Util.EmbedUtil;
 
 import java.awt.*;
 
-public class CursWord {
+public class CurseWord {
     private static CurseWordRepo curseWordRepo;
     // 금지어 관련 커맨드 처리
     public static void CurseWordCommand(MessageReceivedEvent messageReceivedEvent, String[] args) {
