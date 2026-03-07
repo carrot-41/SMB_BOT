@@ -1,4 +1,4 @@
-package CurseWord;
+package CurseWordDB;
 
 import CurseWordDB.Normalizer.HangulUtils;
 import CurseWordDB.Normalizer.TextNormalizer;
