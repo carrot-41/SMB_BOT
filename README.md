@@ -56,13 +56,13 @@ src/main/java/
 │   ├── ListenCommend.java # 명령어 리스너
 │   ├── EmbedUtil.java     # 임베드 메시지 유틸
 │   └── Test.java          # 테스트 클래스
-├── CurseWord/               # 금지어 필터링
+├── CurseWordDB/               # 금지어 필터링
 │   ├── MessageFilter.java # 메시지 필터
 │   └── database/          # 금지어 데이터베이스
-│       ├── CurseWord.java
+│       ├── CurseWordDB.java
 │       ├── CurseWordEntity.java
 │       └── CurseWordRepo.java
-└── Warn/                  # 경고 시스템
+└── WarnDB/                  # 경고 시스템
     ├── WarnCount.java     # 경고 카운트
     ├── WarnEntity.java    # 경고 엔티티
     └── WarnRepo.java      # 경고 저장소
@@ -146,7 +146,7 @@ java -jar build/libs/CMS_BOT-1.0-SNAPSHOT.jar
 
 ## 📊 데이터베이스 스키마
 
-### CurseWord (금지어)
+### CurseWordDB (금지어)
 ```java
 - guildId: String (서버 ID)
 - word: String (금지어)
