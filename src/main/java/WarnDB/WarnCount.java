@@ -1,4 +1,4 @@
-package Warn;
+package WarnDB;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
