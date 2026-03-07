@@ -11,7 +11,6 @@ public class CursWord {
     private static CurseWordRepo curseWordRepo;
     // 금지어 관련 커맨드 처리
     public static void CurseWordCommand(MessageReceivedEvent messageReceivedEvent, String[] args) {
-        ListenCommend listenCommend = new ListenCommend();
         EmbedUtil embedUtil = new EmbedUtil(messageReceivedEvent);
         String word = (args.length > 1 ? args[1] : "").toLowerCase();
         String OnOff = (args.length > 2 ? args[2] : "").toLowerCase();
