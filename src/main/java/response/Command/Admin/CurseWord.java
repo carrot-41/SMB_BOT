@@ -1,4 +1,4 @@
-package response.Command;
+package response.Command.Admin;
 
 import CurseWordDB.database.CurseWordRepo;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;

@@ -1,4 +1,4 @@
-package response.Command;
+package response.Command.Admin;
 
 import WarnDB.WarnCount;
 import WarnDB.WarnRepo;

@@ -1,4 +1,4 @@
-package response.Command;
+package response.Command.Admin;
 
 import WarnDB.WarnRepo;
 import net.dv8tion.jda.api.entities.Member;

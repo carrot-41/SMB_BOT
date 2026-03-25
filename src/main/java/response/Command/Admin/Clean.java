@@ -1,4 +1,4 @@
-package response.Command;
+package response.Command.Admin;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;

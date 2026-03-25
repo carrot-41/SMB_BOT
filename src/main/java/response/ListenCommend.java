@@ -12,11 +12,11 @@ import response.Util.HighestPermUtil;
 
 import java.awt.*;
 
-import static response.Command.Clean.CleanCommand;
-import static response.Command.CurseWord.CurseWordCommand;
-import static response.Command.Help.readhelp;
-import static response.Command.Mute.MuteCommand;
-import static response.Command.Warn.WarnCommand;
+import static response.Command.Admin.Clean.CleanCommand;
+import static response.Command.Admin.CurseWord.CurseWordCommand;
+import static response.Command.Public.Help.readhelp;
+import static response.Command.Admin.Mute.MuteCommand;
+import static response.Command.Admin.Warn.WarnCommand;
 
 @Component
 @RequiredArgsConstructor
