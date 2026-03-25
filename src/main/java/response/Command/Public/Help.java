@@ -1,4 +1,4 @@
-package response.Command;
+package response.Command.Public;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import response.Util.EmbedUtil;
